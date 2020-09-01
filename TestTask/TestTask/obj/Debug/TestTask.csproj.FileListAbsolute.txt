@@ -1,0 +1,9 @@
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\bin\Debug\TestTask.exe.config
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\bin\Debug\TestTask.exe
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\bin\Debug\TestTask.pdb
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\obj\Debug\TestTask.csprojAssemblyReference.cache
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\obj\Debug\TestTask.Form1.resources
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\obj\Debug\TestTask.Properties.Resources.resources
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\obj\Debug\TestTask.csproj.GenerateResource.cache
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\obj\Debug\TestTask.exe
+C:\Users\Kitik.Nikita\Desktop\TestTask\TestTask\obj\Debug\TestTask.pdb
