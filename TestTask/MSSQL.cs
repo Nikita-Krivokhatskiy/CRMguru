@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using TestTask.Properties;
 
 namespace TestTask
 {
@@ -8,7 +9,7 @@ namespace TestTask
         SqlConnection conn;
         public MSSQL()
         {
-            conn = new SqlConnection(@"Data Source = NIKITA\SQLEXPRESS;Initial Catalog=TeskTaskBD;Integrated Security=True");
+            conn = new SqlConnection(Settings.Default.TeskTaskBDConnectionString);
         }
 
         public void Save(APIreader reader)
