@@ -12,7 +12,7 @@ namespace TestTask
         }
         APIreader apireader;
         MSSQL mssql = new MSSQL();
-        private void search_Click(object sender, EventArgs e)//Кнопка поиска страны
+        private void search_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
             if (apireader == null || apireader.NewCountry(textBox1.Text))
@@ -23,12 +23,12 @@ namespace TestTask
             listBox1.Items.AddRange(apireader.All);
         }
 
-        private void exit_Click(object sender, EventArgs e)//Кнопка выхода из программы
+        private void exit_Click(object sender, EventArgs e)
         {
             Environment.Exit(1);
         }
 
-        private void save_Click(object sender, EventArgs e)//Кнопка сохранения
+        private void save_Click(object sender, EventArgs e)
         {
             if (apireader.Country != null)//Если страна не найдена или поиск не проводился, то выдаем ошибку
             {

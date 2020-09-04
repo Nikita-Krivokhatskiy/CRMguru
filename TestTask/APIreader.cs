@@ -21,7 +21,7 @@ namespace TestTask
             spisok();
         }
 
-        public bool NewCountry(string name)//Проверяем изменилась ли страна с нашего последнего запроса
+        public bool NewCountry(string name)
         {
             if (name == Country_name)
                 return false;
@@ -29,9 +29,9 @@ namespace TestTask
                 return true;
         }
 
-        private void spisok()//Пробуем запросить данные и сохраняем их 
+        private void spisok()
         {
-            try
+            try//Пробуем запросить данные и сохраняем их 
             {
                 Country = read("name");
                 Code = read("alpha2Code");
@@ -47,7 +47,7 @@ namespace TestTask
             }
         }
 
-        private string read(string zapros)//Запрашиваем данные со стороннего API:https://restcountries.eu/rest/v2
+        private string read(string zapros)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://restcountries.eu/rest/v2/name/" + Country_name + "?fields=" + zapros);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();

@@ -6,19 +6,23 @@ namespace TestTask
     class MSSQL
     {
         SqlConnection conn;
-        public MSSQL()//Коннектимся к серверу с БД
+        public MSSQL()
         {
             conn = new SqlConnection(@"Data Source = NIKITA\SQLEXPRESS;Initial Catalog=TeskTaskBD;Integrated Security=True");
         }
 
-        public void Save(APIreader reader)//Сохранение данных в БД
+        public void Save(APIreader reader)
         {
-            int City_id = check("SELECT City_id, Name FROM City", reader.Capital);                          //Проверяем записи о сохранении данного города
+            //Проверяем записи о сохранении данного города
+            //Если данного города нет в БД, то сохраняем его
+            //Если город есть в БД, то находим его id
+            //Аналогично для региона и страны. Кроме поска id страны
+            int City_id = check("SELECT City_id, Name FROM City", reader.Capital);                          
             if (City_id != -1)
-                Command("INSERT INTO City(City_id, Name) VALUES(" + City_id + ",'" + reader.Capital + "')");//Если данного города нет в БД, то сохраняем его
+                Command("INSERT INTO City(City_id, Name) VALUES(" + City_id + ",'" + reader.Capital + "')");
             else
-                City_id = get_id("SELECT City_id, Name FROM City", reader.Capital);                         //Если город есть в БД, то находим его id
-            int Region_id = check("SELECT Region_id, Name FROM Region", reader.Region);                     //Аналогично для региона и страны. Кроме поска id страны
+                City_id = get_id("SELECT City_id, Name FROM City", reader.Capital);                         
+            int Region_id = check("SELECT Region_id, Name FROM Region", reader.Region);                     
             if (Region_id != -1)
                 Command("INSERT INTO Region(Region_id, Name) VALUES(" + Region_id + ",'" + reader.Region + "')");
             else
@@ -27,7 +31,8 @@ namespace TestTask
             if (Country_id != -1)
                 Command("INSERT INTO Country(Country_id, Name, CodeName, Capital, Area, Population, Region) " +
                     "VALUES(" + Country_id + ", '" + reader.Country + "', '" + reader.Code + "', " + City_id + ", " + reader.Area + ", " + reader.Population + ", " + Region_id + ")");
-            else                                                                                             //Обновляем данные Страны 
+            else
+            //Обновляем данные Страны
             {
                 Country_id = get_id("SELECT Country_id, Name FROM Country", reader.Country);
                 Command("UPDATE Country " +
@@ -37,7 +42,7 @@ namespace TestTask
 
         }
 
-        private void Command(string command)//Выполняем команду
+        private void Command(string command)
         {
             conn.Open();
             SqlCommand city = new SqlCommand(command);
@@ -46,7 +51,7 @@ namespace TestTask
             conn.Close();
         }
 
-        private int check(string table, string zapros)//Проверяем наличие данных в БД
+        private int check(string table, string zapros)
         {
             conn.Open();
             SqlCommand cmd = new SqlCommand(table);
@@ -66,7 +71,7 @@ namespace TestTask
             return id;
         }
 
-        private int get_id(string table, string zapros)//Получаем id из БД
+        private int get_id(string table, string zapros)
         {
             conn.Open();
             SqlCommand cmd = new SqlCommand(table);
@@ -85,7 +90,7 @@ namespace TestTask
             return -1;
         }
 
-        public DataTable Load()//Загрузка отображения из БД
+        public DataTable Load()
         {
             conn.Open();
             SqlCommand cmd = new SqlCommand("SELECT Country.Name, Country.CodeName, City.Name AS Capital, Country.Area, Country.Population, Region.Name AS Region " +
