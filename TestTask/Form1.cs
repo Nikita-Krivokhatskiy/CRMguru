@@ -5,40 +5,42 @@ namespace TestTask
 {
     public partial class Form1 : Form
     {
+        APIreader Apireader;
+        MSSQL Mssql = new MSSQL();
+
         public Form1()
         {
             InitializeComponent();
-            dataGridView1.DataSource = mssql.Load();
+            Viewer.DataSource = Mssql.Load();
         }
-        APIreader apireader;
-        MSSQL mssql = new MSSQL();
-        private void search_Click(object sender, EventArgs e)
+
+        private void Search_Click(object sender, EventArgs e)
         {
-            listBox1.Items.Clear();
-            if (apireader == null || apireader.NewCountry(textBox1.Text))
+            ListBox.Items.Clear();
+            if (Apireader == null || Apireader.CheckNewCountry(TextBox.Text))
             {
 
-                apireader = new APIreader(textBox1.Text);
+                Apireader = new APIreader(TextBox.Text);
             }
-            listBox1.Items.AddRange(apireader.All);
+            ListBox.Items.AddRange(Apireader.All);
         }
 
-        private void exit_Click(object sender, EventArgs e)
+        private void Exit_Click(object sender, EventArgs e)
         {
             Environment.Exit(1);
         }
 
-        private void save_Click(object sender, EventArgs e)
+        private void Save_Click(object sender, EventArgs e)
         {
-            if (apireader.Country != null)//Если страна не найдена или поиск не проводился, то выдаем ошибку
+            if (Apireader.Country != null)//Если страна не найдена или поиск не проводился, то выдаем ошибку
             {
-                mssql.Save(apireader);
-                dataGridView1.DataSource = mssql.Load();
+                Mssql.Save(Apireader);
+                Viewer.DataSource = Mssql.Load();
             }
             else
             {
-                listBox1.Items.Clear();
-                listBox1.Items.Add("Вы не выбрали страну");
+                ListBox.Items.Clear();
+                ListBox.Items.Add("Вы не выбрали страну");
             }
         }
     }

@@ -15,30 +15,30 @@ namespace TestTask
         public string Population;
         public string Region;
         public string[] All;
-        public APIreader(string name)
+        public APIreader(string CountryName)
         {
-            Country_name = name;
-            spisok();
+            Country_name = CountryName;
+            FillingInData();
         }
 
-        public bool NewCountry(string name)
+        public bool CheckNewCountry(string NewCountry)
         {
-            if (name == Country_name)
+            if (NewCountry == Country_name)
                 return false;
             else
                 return true;
         }
 
-        private void spisok()
+        private void FillingInData()
         {
             try//Пробуем запросить данные и сохраняем их 
             {
-                Country = read("name");
-                Code = read("alpha2Code");
-                Capital = read("capital");
-                Area = read("area");
-                Population = read("population");
-                Region = read("region");
+                Country = ApiSearch("name");
+                Code = ApiSearch("alpha2Code");
+                Capital = ApiSearch("capital");
+                Area = ApiSearch("area");
+                Population = ApiSearch("population");
+                Region = ApiSearch("region");
                 All = new string[] { "Название страны: " + Country, "Код страны: " + Code, "Столица: " + Capital, "Площадь: " + Area, "Население: " + Population, "Регион: " + Region };
             }
             catch (Exception)//Если данные не найдены или таких данных нет, то сообщаем об ошибке 
@@ -47,14 +47,13 @@ namespace TestTask
             }
         }
 
-        private string read(string zapros)
+        private string ApiSearch(string Field)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://restcountries.eu/rest/v2/name/" + Country_name + "?fields=" + zapros);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://restcountries.eu/rest/v2/name/" + Country_name + "?fields=" + Field);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream stream = response.GetResponseStream();
             StreamReader reader = new StreamReader(stream);
-            string otvet = Regex.Replace(reader.ReadToEnd().Split(new char[] {':',','}, StringSplitOptions.RemoveEmptyEntries)[1], "[^ a-zA-Z0-9.]", "");
-            return otvet;
+            return Regex.Replace(reader.ReadToEnd().Split(new char[] {':',','}, StringSplitOptions.RemoveEmptyEntries)[1], "[^ a-zA-Z0-9.]", "");
         }
     }
 }
