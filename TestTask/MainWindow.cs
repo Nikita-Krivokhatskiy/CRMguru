@@ -43,6 +43,7 @@ namespace TestTask
                 SaveLabel.Text = "Ошибка, попробуйте повторно найти страну";
             }
             SaveLabel.Visible = true;
+            SaveLabelTimer.Enabled = false;
             SaveLabelTimer.Enabled = true;
             Viewer.DataSource = mssql.Load();
         }
@@ -51,7 +52,6 @@ namespace TestTask
         {
             SaveLabel.Visible = false;
             SaveLabelTimer.Enabled = false;
-
         }
     }
 }
