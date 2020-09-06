@@ -7,49 +7,57 @@ namespace TestTask
 {
     class APIreader
     {
-        public string Country;
-        private string Country_name;
-        public string Code;
-        public string Capital;
-        public string Area;
-        public string Population;
-        public string Region;
-        public string[] All;
-        public APIreader(string CountryName)
+        private string countryName;
+        public string country;
+        public string code;
+        public string capital;
+        public string area;
+        public string population;
+        public string region;
+        public string[] allData;
+
+        public APIreader(string inputCountryName)
         {
-            Country_name = CountryName;
+            countryName = inputCountryName;
             FillingInData();
         }
 
-        public bool CheckNewCountry(string NewCountry)
+        public bool CheckNewCountry(string newCountry)
         {
-            if (NewCountry == Country_name)
-                return false;
-            else
-                return true;
+            return newCountry != countryName;
         }
 
         private void FillingInData()
         {
-            try//Пробуем запросить данные и сохраняем их 
+            //Пробуем запросить данные и сохраняем их 
+            try
             {
-                Country = ApiSearch("name");
-                Code = ApiSearch("alpha2Code");
-                Capital = ApiSearch("capital");
-                Area = ApiSearch("area");
-                Population = ApiSearch("population");
-                Region = ApiSearch("region");
-                All = new string[] { "Название страны: " + Country, "Код страны: " + Code, "Столица: " + Capital, "Площадь: " + Area, "Население: " + Population, "Регион: " + Region };
+                country = ApiSearch("name");
+                code = ApiSearch("alpha2Code");
+                capital = ApiSearch("capital");
+                area = ApiSearch("area");
+                population = ApiSearch("population");
+                region = ApiSearch("region");
+                allData = new string[] 
+                {
+                    "Название страны: " + country,
+                    "Код страны: " + code,
+                    "Столица: " + capital,
+                    "Площадь: " + area,
+                    "Население: " + population,
+                    "Регион: " + region
+                };
             }
-            catch (Exception)//Если данные не найдены или таких данных нет, то сообщаем об ошибке 
+            //Если данные не найдены или таких данных нет, то сообщаем об ошибке 
+            catch
             {
-                All = new string[] { "Данной страны не существует" };
+                allData = new string[] { "Данной страны не существует" };
             }
         }
 
-        private string ApiSearch(string Field)
+        private string ApiSearch(string field)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://restcountries.eu/rest/v2/name/" + Country_name + "?fields=" + Field);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://restcountries.eu/rest/v2/name/" + countryName + "?fields=" + field);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream stream = response.GetResponseStream();
             StreamReader reader = new StreamReader(stream);

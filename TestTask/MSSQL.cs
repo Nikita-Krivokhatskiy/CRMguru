@@ -6,103 +6,89 @@ namespace TestTask
 {
     class MSSQL
     {
-        SqlConnection BDConnection;
+        SqlConnection connectionDB;
         public MSSQL()
         {
-            BDConnection = new SqlConnection(Settings.Default.TeskTaskBDConnectionString);
+            connectionDB = new SqlConnection(Settings.Default.TeskTaskBDConnectionString);
         }
 
-        public string Save(APIreader Reader)
+        public bool Save(APIreader reader)
         {
-            string SaveOut = "";
-            //Проверяем записи о сохранении данного города
-            //Если данного города нет в БД, то сохраняем его
-            //Если город есть в БД, то находим его id
-            //Аналогично для региона и страны. Кроме поска id страны
-            int City_id = СheckInBD("SELECT City_id, Name FROM City", Reader.Capital);                          
-            if (City_id != -1)
-                Query("INSERT INTO City(City_id, Name) VALUES(" + City_id + ",'" + Reader.Capital + "')");
-            else
-                City_id = GetIdFromBD("SELECT City_id, Name FROM City", Reader.Capital);                         
-            int Region_id = СheckInBD("SELECT Region_id, Name FROM Region", Reader.Region);                     
-            if (Region_id != -1)
-                Query("INSERT INTO Region(Region_id, Name) VALUES(" + Region_id + ",'" + Reader.Region + "')");
-            else
-                Region_id = GetIdFromBD("SELECT Region_id, Name FROM Region", Reader.Region);
-            int Country_id = СheckInBD("SELECT Country_id, Name FROM Country", Reader.Country);
-            if (Country_id != -1)
+            bool saveOut = false;
+            //Пробуем сохранить данные в БД
+            try
             {
-                Query("INSERT INTO Country(Country_id, Name, CodeName, Capital, Area, Population, Region) " +
-                    "VALUES(" + Country_id + ", '" + Reader.Country + "', '" + Reader.Code + "', " + City_id + ", " + Reader.Area + ", " + Reader.Population + ", " + Region_id + ")");
-                SaveOut = "Успешно сохранено";
-            }
-            else
-            //Обновляем данные Страны
-            {
-                Country_id = GetIdFromBD("SELECT Country_id, Name FROM Country", Reader.Country);
-                Query("UPDATE Country " +
-                    "SET Name='" + Reader.Country + "', CodeName='" + Reader.Code + "', Capital=" + City_id + ", Area=" + Reader.Area + ", Population=" + Reader.Population + ", Region=" + Region_id + " " +
-                    "WHERE Country_id=" + Country_id);
-                SaveOut = "Успешно обновлено";
-            }
-            return SaveOut;
-        }
-
-        private void Query(string Operator)
-        {
-            BDConnection.Open();
-            SqlCommand Command = new SqlCommand(Operator) { Connection = BDConnection };
-            Command.ExecuteNonQuery();
-            BDConnection.Close();
-        }
-
-        private int СheckInBD(string Operator, string SearchName)
-        {
-            BDConnection.Open();
-            SqlCommand Command = new SqlCommand(Operator) { Connection = BDConnection };
-            SqlDataReader Reader = Command.ExecuteReader();
-            int id = -1;
-            while (Reader.Read())
-            {
-                if (Reader[1].ToString() == SearchName)
+                if (reader.allData.Length > 1)
                 {
-                    BDConnection.Close();
-                    return -1;
+                    int cityId = SaveInBD("SELECT City_id, Name FROM City", reader.capital,
+                        "INSERT INTO City(City_id, Name) VALUES(", ", '" + reader.capital + "')");
+                    int regionId = SaveInBD("SELECT Region_id, Name FROM Region", reader.region,
+                        "INSERT INTO Region(Region_id, Name) VALUES(", reader.region);
+                    int countryId = SaveInBD("SELECT Country_id, Name FROM Country", reader.country,
+                        "INSERT INTO Country(Country_id, Name) VALUES(", ", '" + reader.country + "')");
+                    Query("UPDATE Country " +
+                        "SET Name='" + reader.country + 
+                        "', CodeName='" + reader.code + 
+                        "', Capital=" + cityId + 
+                        ", Area=" + reader.area + 
+                        ", Population=" + reader.population + 
+                        ", Region=" + regionId + " " +
+                        "WHERE Country_id=" + countryId);
+                    saveOut = true;
                 }
-                id = (int)Reader[0] + 1;
             }
-            BDConnection.Close();
+            catch
+            {
+                saveOut = false;
+                connectionDB.Close();
+            }
+            return saveOut;
+        }
+
+        private int SaveInBD(string select, string searchName, string insert, string data)
+        {
+            //Проверяем записи о сохранении
+            //Если данных нет в БД, то сохраняем их
+            //Если данные есть в БД, то возвращаем их id
+            int id = 1;
+            bool existInDB = false;
+            connectionDB.Open();
+            SqlCommand command = new SqlCommand(select) { Connection = connectionDB };
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                if (reader[1].ToString() == searchName)
+                {
+                    id = (int)reader[0];
+                    existInDB = true;
+                    break;
+                }
+                id = (int)reader[0] + 1;
+            }
+            connectionDB.Close();
+            if (!existInDB)
+                Query(insert + id + data);
             return id;
         }
 
-        private int GetIdFromBD(string Operator, string SearchName)
+        private void Query(string sqlOperator)
         {
-            BDConnection.Open();
-            SqlCommand Command = new SqlCommand(Operator) { Connection = BDConnection };
-            SqlDataReader Reader = Command.ExecuteReader();
-            while (Reader.Read())
-            {
-                if (Reader[1].ToString() == SearchName)
-                {
-                    int id = (int)Reader[0];
-                    BDConnection.Close();
-                    return id;
-                }
-            }
-            BDConnection.Close();
-            return -1;
+            connectionDB.Open();
+            SqlCommand command = new SqlCommand(sqlOperator) { Connection = connectionDB };
+            command.ExecuteNonQuery();
+            connectionDB.Close();
         }
 
         public DataTable Load()
         {
-            BDConnection.Open();
-            SqlCommand Command = new SqlCommand("SELECT Country.Name, Country.CodeName, City.Name AS Capital, Country.Area, Country.Population, Region.Name AS Region " +
-                "FROM City INNER JOIN Country ON City.City_id = Country.Capital INNER JOIN Region ON Country.Region = Region.Region_id") { Connection = BDConnection };
-            Command.ExecuteNonQuery();
+            connectionDB.Open();
+            SqlCommand command = new SqlCommand("SELECT Country.Name, Country.CodeName, City.Name AS Capital, Country.Area, Country.Population, Region.Name AS Region " +
+                "FROM City INNER JOIN Country ON City.City_id = Country.Capital INNER JOIN Region ON Country.Region = Region.Region_id") { Connection = connectionDB };
+            command.ExecuteNonQuery();
             DataTable dataTable = new DataTable();
-            SqlDataAdapter dataAdapter = new SqlDataAdapter(Command);
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
             dataAdapter.Fill(dataTable);
-            BDConnection.Close();
+            connectionDB.Close();
             return dataTable;
         }
 
