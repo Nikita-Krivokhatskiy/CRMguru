@@ -34,7 +34,9 @@ namespace TestTask
         {
             if (Apireader.Country != null)//Если страна не найдена или поиск не проводился, то выдаем ошибку
             {
-                Mssql.Save(Apireader);
+                SaveLabel.Text = Mssql.Save(Apireader);
+                SaveLabel.Visible = true;
+                SaveLabelTimer.Enabled = true;
                 Viewer.DataSource = Mssql.Load();
             }
             else
@@ -42,6 +44,13 @@ namespace TestTask
                 ListBox.Items.Clear();
                 ListBox.Items.Add("Вы не выбрали страну");
             }
+        }
+
+        private void SaveLabelTimerTick(object sender, EventArgs e)
+        {
+            SaveLabel.Visible = false;
+            SaveLabelTimer.Enabled = false;
+
         }
     }
 }

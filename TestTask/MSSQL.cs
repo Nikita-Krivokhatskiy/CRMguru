@@ -12,8 +12,9 @@ namespace TestTask
             BDConnection = new SqlConnection(Settings.Default.TeskTaskBDConnectionString);
         }
 
-        public void Save(APIreader Reader)
+        public string Save(APIreader Reader)
         {
+            string SaveOut = "";
             //Проверяем записи о сохранении данного города
             //Если данного города нет в БД, то сохраняем его
             //Если город есть в БД, то находим его id
@@ -30,8 +31,11 @@ namespace TestTask
                 Region_id = GetIdFromBD("SELECT Region_id, Name FROM Region", Reader.Region);
             int Country_id = СheckInBD("SELECT Country_id, Name FROM Country", Reader.Country);
             if (Country_id != -1)
+            {
                 Query("INSERT INTO Country(Country_id, Name, CodeName, Capital, Area, Population, Region) " +
                     "VALUES(" + Country_id + ", '" + Reader.Country + "', '" + Reader.Code + "', " + City_id + ", " + Reader.Area + ", " + Reader.Population + ", " + Region_id + ")");
+                SaveOut = "Успешно сохранено";
+            }
             else
             //Обновляем данные Страны
             {
@@ -39,8 +43,9 @@ namespace TestTask
                 Query("UPDATE Country " +
                     "SET Name='" + Reader.Country + "', CodeName='" + Reader.Code + "', Capital=" + City_id + ", Area=" + Reader.Area + ", Population=" + Reader.Population + ", Region=" + Region_id + " " +
                     "WHERE Country_id=" + Country_id);
+                SaveOut = "Успешно обновлено";
             }
-
+            return SaveOut;
         }
 
         private void Query(string Operator)

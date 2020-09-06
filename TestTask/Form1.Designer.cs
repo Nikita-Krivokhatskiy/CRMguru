@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.search = new System.Windows.Forms.Button();
             this.TextBox = new System.Windows.Forms.TextBox();
             this.exit = new System.Windows.Forms.Button();
@@ -41,6 +42,8 @@
             this.populationDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.regionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Viewer = new System.Windows.Forms.DataGridView();
+            this.SaveLabel = new System.Windows.Forms.Label();
+            this.SaveLabelTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.Viewer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -128,11 +131,29 @@
             this.Viewer.Size = new System.Drawing.Size(664, 150);
             this.Viewer.TabIndex = 11;
             // 
+            // SaveLabel
+            // 
+            this.SaveLabel.AutoSize = true;
+            this.SaveLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.SaveLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.SaveLabel.Location = new System.Drawing.Point(12, 299);
+            this.SaveLabel.Name = "SaveLabel";
+            this.SaveLabel.Size = new System.Drawing.Size(63, 15);
+            this.SaveLabel.TabIndex = 12;
+            this.SaveLabel.Text = "SomeText";
+            this.SaveLabel.Visible = false;
+            // 
+            // SaveLabelTimer
+            // 
+            this.SaveLabelTimer.Interval = 1500;
+            this.SaveLabelTimer.Tick += new System.EventHandler(this.SaveLabelTimerTick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(689, 329);
+            this.Controls.Add(this.SaveLabel);
             this.Controls.Add(this.Viewer);
             this.Controls.Add(this.save);
             this.Controls.Add(this.ListBox);
@@ -163,6 +184,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn populationDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn regionDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridView Viewer;
+        private System.Windows.Forms.Label SaveLabel;
+        private System.Windows.Forms.Timer SaveLabelTimer;
     }
 }
 
